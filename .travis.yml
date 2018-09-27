@@ -1,37 +1,30 @@
 sudo: required
 language: minimal
-
 git:
   depth: 2
-
 services:
-  - docker
-
+- docker
 env:
   global:
-    - IMAGE_REPO=gcr.io/dd-decaf-cfbf6/modeling-base
-    - IMAGE=${IMAGE_REPO}:${TRAVIS_BRANCH}
-
+  - IMAGE_REPO=gcr.io/dd-decaf-cfbf6/modeling-base
+  - IMAGE=${IMAGE_REPO}:${TRAVIS_BRANCH}
 before_install:
-  - echo ${DOCKER_PASSWORD} | docker login --username=decaftravis --password-stdin
-
+- echo ${DOCKER_PASSWORD} | docker login --username=decaftravis --password-stdin
 install:
-  - make build
-
+- make build
 script:
-  - make safety
-
-before_deploy:
-  - ./scripts/install_gcloud.sh
-  - docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
-  - docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_BRANCH}
-  - docker push ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
-  - docker push ${IMAGE_REPO}:${TRAVIS_BRANCH}
-
+- make safety
+after_success:
+- "./scripts/install_gcloud.sh"
+- docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
+- docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_BRANCH}
+- docker push ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
+- docker push ${IMAGE_REPO}:${TRAVIS_BRANCH}
 notifications:
   email: false
   slack:
     rooms:
+      secure: gyM8a9xfE03gDi6y2WroSzRDud3f5Q4oCn4s7XbAQQZIiCjxT/O4Rj8FUeuwhnEZGzTQJo3QgbKrZ6Qk5OMyyb5dJn6HpaobPyk9bWybcfeFIASId5hGDCtPFfI0vUJ8Y1EXaqqjd1w9TOr6vpwqC2ilbNm9RZ0BXZT7Q6pILz63gDEojCSNhXJTcHFhdoRmrvqClccvkt0DGuTfpxplGTLu5XMaZwPojdHot5zVaNJAwj4clMQcOYdMKsfyg+HX2+89HaP2IssNeL83ynuejGBzIDMLNiFYyix1jWoXTcDlsu/8JdgJ1BcGeW9mOR8XI7DAclus8lOk8eNFiAVizBzMJROrr1MXb4QM9CUDCq4Ja/Jpi61mO81BAag4nnc2t0gvPbyEsKtu3xPpKV0SMpyrI8PYZbd9yykZ3xtNlLFE+PjwZnJiI835GGk/kJN4hDlHLwXXhSvIi1o900FJ1uc9Crn33F2NNuSptRGhs7lSWISnGVGX/2w6zylpqKKm86hWo2UwX/WBrHBlWfQzmI2qhI2zaFoS2whw8ly/RDG19lF/A9WeKOwOQU6l50VqQTOBiCfOm/DHDgE7isKiKiktRFmYMCwGCElo6yZFY39EKMIk51o4vHhKM5PndgqSiZds8EpDIN4PY+mKMnrT1n37NYifLQyQAVNtChThPRI=
     on_success: change
     on_failure: change
     on_pull_requests: false
