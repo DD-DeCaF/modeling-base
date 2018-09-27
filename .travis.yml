@@ -1,0 +1,37 @@
+sudo: required
+language: minimal
+
+git:
+  depth: 2
+
+services:
+  - docker
+
+env:
+  global:
+    - IMAGE_REPO=gcr.io/dd-decaf-cfbf6/modeling-base
+    - IMAGE=${IMAGE_REPO}:${TRAVIS_BRANCH}
+
+before_install:
+  - echo ${DOCKER_PASSWORD} | docker login --username=decaftravis --password-stdin
+
+install:
+  - make build
+
+script:
+  - make safety
+
+before_deploy:
+  - ./scripts/install_gcloud.sh
+  - docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
+  - docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_BRANCH}
+  - docker push ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
+  - docker push ${IMAGE_REPO}:${TRAVIS_BRANCH}
+
+notifications:
+  email: false
+  slack:
+    rooms:
+    on_success: change
+    on_failure: change
+    on_pull_requests: false
