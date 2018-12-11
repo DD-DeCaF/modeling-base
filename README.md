@@ -14,7 +14,6 @@ The following environment variables **must** be defined in the **Travis settings
 |----------|-------------|
 | `REPO_URL` | URL of the private repository storing proprietary solvers. |
 | `GITHUB_TOKEN` | A GitHub access token (which should have `repo` permissions only) in order to download proprietary solvers. |
-| `DOCKER_PASSWORD` | The Docker Hub password for the `decaftravis` user. |
 | `GCLOUD_EMAIL` | The Google Cloud e-mail for the Travis service account. |
 | `GCLOUD_KEY` | The Google Cloud key. |
 
