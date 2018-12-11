@@ -8,8 +8,6 @@ env:
   global:
   - IMAGE_REPO=gcr.io/dd-decaf-cfbf6/modeling-base
   - IMAGE=${IMAGE_REPO}:${TRAVIS_BRANCH}
-before_install:
-- echo ${DOCKER_PASSWORD} | docker login --username=decaftravis --password-stdin
 install:
 - make build
 script:
