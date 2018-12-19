@@ -2,6 +2,10 @@ sudo: required
 language: minimal
 git:
   depth: 2
+branches:
+  only:
+  - master
+  - devel
 services:
 - docker
 env:
