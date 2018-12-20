@@ -1,6 +1,9 @@
 FROM python:3.6-slim
 
 ENV PYTHONUNBUFFERED=1
+# The sympy cache causes significant memory leaks as it is currently used by
+# optlang. Disable it by default.
+ENV SYMPY_USE_CACHE=no
 
 ARG CWD=/opt
 ARG REPO_URL
