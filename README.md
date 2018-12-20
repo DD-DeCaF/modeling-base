@@ -6,6 +6,9 @@ A base Docker image for our modeling needs. Contains the relevant Python
 packages, e.g., cobra and cameo, as well as chosen solvers, i.e., at the 
 moment GLPK and CPLEX.
 
+Note that the sympy cache is disabled by default (by setting the env var
+`SYMPY_USE_CACHE=no`) as its usage by optlang causes memory leaks.
+
 ## Environment
 
 The following environment variables **must** be defined in the **Travis settings**.
