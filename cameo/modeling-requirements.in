@@ -7,7 +7,6 @@
 -r /opt/base-requirements.in
 
 # Modeling libraries
-python-libsbml
 cobra
 cameo
 
