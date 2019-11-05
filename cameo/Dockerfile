@@ -1,34 +1,26 @@
-FROM python:3.6-slim
+FROM dddecaf/wsgi-base:debian
 
-ENV PYTHONUNBUFFERED=1
 # The sympy cache causes significant memory leaks as it is currently used by
 # optlang. Disable it by default.
 ENV SYMPY_USE_CACHE=no
 
-ARG CWD=/opt
+# CPLEX is provided externally; see the README
 ARG REPO_URL
 ARG GITHUB_TOKEN
 ARG CPLEX="cplex_128.tar.gz"
 
-RUN set -eux \
-    && apt-get update \
-    && apt-get install --yes --only-upgrade openssl ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Work in the /opt directory to persist the pip-compiled requirement list for
+# child images to use.
+WORKDIR /opt
 
-WORKDIR "${CWD}"
-
-COPY requirements.in ./
+COPY modeling-requirements.in ./
 
 RUN set -eux \
-    && pip install --upgrade pip setuptools wheel pip-tools \
     && pip-compile --generate-hashes \
-        --output-file requirements.txt requirements.in \
-    && pip-sync requirements.txt \
-    && rm -rf /root/.cache \
-    && rm -rf /tmp/* /var/tmp/*
+        --output-file modeling-requirements.txt modeling-requirements.in \
+    && pip-sync modeling-requirements.txt
 
-# Install CPLEX afterwards when pip was already upgraded.
+# Install CPLEX.
 
 COPY download_solver.py ./
 
