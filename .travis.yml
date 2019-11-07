@@ -16,7 +16,7 @@ before_install:
 - "./scripts/install_gcloud.sh"
 install:
 - make build
-- docker build -t ${IMAGE_REPO}:compiler ./compiler
+- docker build -t ${IMAGE_REPO}:compiler -t ${IMAGE_REPO}:compiler-${IMAGE_HASH_TAG} ./compiler
 script:
 - make safety
 after_success:
@@ -25,6 +25,7 @@ after_success:
 - docker push ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
 - docker push ${IMAGE_REPO}:${TRAVIS_BRANCH}
 - docker push ${IMAGE_REPO}:compiler
+- docker push ${IMAGE_REPO}:compiler-${IMAGE_HASH_TAG}
 notifications:
   email: false
   slack:
