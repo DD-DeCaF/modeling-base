@@ -12,16 +12,19 @@ env:
   global:
   - IMAGE_REPO=gcr.io/dd-decaf-cfbf6/modeling-base
   - IMAGE=${IMAGE_REPO}:${TRAVIS_BRANCH}
+before_install:
+- "./scripts/install_gcloud.sh"
 install:
 - make build
+- docker build -t ${IMAGE_REPO}:compiler ./compiler
 script:
 - make safety
 after_success:
-- "./scripts/install_gcloud.sh"
 - docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
 - docker tag ${IMAGE} ${IMAGE_REPO}:${TRAVIS_BRANCH}
 - docker push ${IMAGE_REPO}:${TRAVIS_COMMIT::12}
 - docker push ${IMAGE_REPO}:${TRAVIS_BRANCH}
+- docker push ${IMAGE_REPO}:compiler
 notifications:
   email: false
   slack:

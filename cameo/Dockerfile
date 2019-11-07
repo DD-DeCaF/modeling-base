@@ -29,6 +29,5 @@ RUN set -eux \
     # Pre-install the compiled requirements to save some build time for child
     # images.
     && pip-sync modeling-requirements.txt \
-    # Delete the pip cache to minimize image size. Note that the pip-tools
-    # cache is kept to speed up `pip-compile` in child images.
-    && rm -rf /root/.cache/pip
+    # Delete the pip cache to minimize image size.
+    && rm -rf /root/.cache
