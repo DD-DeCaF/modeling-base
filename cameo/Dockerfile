@@ -37,11 +37,16 @@ WORKDIR /opt
 # CPLEX is provided externally; see the README.
 ARG CPLEX
 
+# We use ADD in order to decompress and extract a tar archive.
 ADD "${CPLEX}" ./cplex
 
 COPY modeling-requirements.in ./
 
 RUN set -eux \
+    # Install build tools. These can be required for the `pip-compile` step in
+    # child images that require to build packages from source.
+    && apt-get update \
+    && apt-get install --yes build-essential \
     # Compile all the modeling requirements. Note that `pip-compile` will use
     # the local installation of cplex.
     && pip-compile --allow-unsafe --generate-hashes --verbose \
@@ -52,6 +57,8 @@ RUN set -eux \
     # Install CPLEX from the external source, after dependency compilation.
     # This means child images can only use `pip install` not `pip-sync`!
     && pip --no-cache-dir install "$(find ./cplex -type d -name x86-64_linux)" \
-    && rm -rf ./cplex \
     # Delete the pip cache to minimize image size.
     && rm -rf /root/.cache
+    # Clean up to reduce layer size.
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
