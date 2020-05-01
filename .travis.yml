@@ -1,5 +1,6 @@
-sudo: required
-language: minimal
+os: linux
+language: python
+python: "3.6"
 git:
   depth: 2
 branches:
@@ -15,10 +16,12 @@ env:
   - SHORT_COMMIT=${TRAVIS_COMMIT:0:7}
   - BUILD_TIMESTAMP=$(date --utc --iso-8601=seconds)
   - BUILD_DATE=$(date --utc --iso-8601=date)
+  - CPLEX=cplex_128.tar.gz
 before_install:
-- "./scripts/install_gcloud.sh"
+- ./scripts/install_gcloud.sh
+- python3 download_solver.py "cameo/${CPLEX}"
 install:
-- make build CPLEX=cplex_128.tar.gz
+- make build
 script:
 - make safety
 after_success:
