@@ -1,21 +1,65 @@
 .PHONY: cameo build
 
-IMAGE ?= gcr.io/dd-decaf-cfbf6/modeling-base:latest
+################################################################################
+# Variables                                                                    #
+################################################################################
+
+CPLEX ?= "cplex_128.tar.gz"
+IMAGE ?= gcr.io/dd-decaf-cfbf6/modeling-base
+BUILD_COMMIT ?= $(shell git rev-parse HEAD)
+SHORT_COMMIT ?= $(shell git rev-parse --short HEAD)
+BUILD_TIMESTAMP ?= $(shell date --utc --iso-8601=seconds)
+BUILD_DATE ?= $(shell date --utc --iso-8601=date)
+CAMEO_TAG := cameo_${BUILD_DATE}_${SHORT_COMMIT}
+CAMEO_COMPILER_TAG := cameo-compiler_${BUILD_DATE}_${SHORT_COMMIT}
 
 ################################################################################
 # COMMANDS                                                                     #
 ################################################################################
 
-## Build all modeling docker images.
-build: cameo
+## Build the cameo Debian image.
+build-cameo:
+	docker pull dddecaf/tag-spy:latest
+	$(eval DEBIAN_BASE_TAG := $(shell docker run --rm dddecaf/tag-spy:latest tag-spy dddecaf/wsgi-base debian dk.dtu.biosustain.wsgi-base.debian.build.timestamp))
+	docker pull dddecaf/wsgi-base:$(DEBIAN_BASE_TAG)
+	docker build --build-arg BASE_TAG=$(DEBIAN_BASE_TAG) \
+		--build-arg BUILD_COMMIT=$(BUILD_COMMIT) \
+		--build-arg BUILD_TIMESTAMP=$(BUILD_TIMESTAMP) \
+		--build-arg CPLEX=$(CPLEX) \
+		--tag $(IMAGE):cameo \
+		--tag $(IMAGE):$(CAMEO_TAG) \
+		./cameo
 
-## Build the cameo docker image.
-cameo:
-	docker build --build-arg GITHUB_TOKEN --build-arg REPO_URL --tag ${IMAGE} cameo
+## Build the cameo-compiler Debian image.
+build-cameo-compiler:
+	docker build --build-arg BASE_TAG=$(CAMEO_TAG) \
+		--build-arg BUILD_COMMIT=$(BUILD_COMMIT) \
+		--build-arg BUILD_TIMESTAMP=$(BUILD_TIMESTAMP) \
+		--tag $(IMAGE):cameo-compiler \
+		--tag $(IMAGE):$(CAMEO_COMPILER_TAG) \
+		./cameo-compiler
+
+## Build all modeling images.
+build: build-cameo build-cameo-compiler
+	$(info Successfully built all images.)
+
+## Push the cameo Debian image.
+push-cameo:
+	docker push $(IMAGE):cameo
+	docker push $(IMAGE):$(CAMEO_TAG)
+
+## Push the cameo-compiler Debian image.
+push-cameo-compiler:
+	docker push $(IMAGE):cameo-compiler
+	docker push $(IMAGE):$(CAMEO_COMPILER_TAG)
+
+## Push all modeling images.
+push: push-cameo push-cameo-compiler
+	$(info Successfully pushed all images.)
 
 ## Check Python dependencies for vulnerabilities.
 safety:
-	docker run --rm ${IMAGE} /bin/sh -c "pip install safety && safety check"
+	docker run --rm ${IMAGE}:cameo /bin/sh -c "pip install safety && safety check --full-report"
 
 ################################################################################
 # Self Documenting Commands                                                    #
