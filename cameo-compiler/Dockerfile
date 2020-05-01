@@ -17,7 +17,7 @@ ARG BASE_TAG=cameo
 
 FROM gcr.io/dd-decaf-cfbf6/modeling-base:${BASE_TAG}
 
-ARG BASE_TAG=debian
+ARG BASE_TAG=cameo
 ARG BUILD_COMMIT
 ARG BUILD_TIMESTAMP
 
@@ -35,7 +35,7 @@ RUN set -eux \
     && apt-get install --yes build-essential \
     # Re-run pip-compile in order to pre-populate the pip cache.
     && pip-compile --allow-unsafe --generate-hashes --verbose \
-        --output-file /dev/null /opt/modeling-requirements.txt \
+        --output-file /dev/null modeling-requirements.txt \
     # Clean up to reduce layer size.
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
