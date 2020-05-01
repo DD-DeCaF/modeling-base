@@ -52,7 +52,7 @@ if __name__ == '__main__':
     except (ValueError, HTTPError):
         # We choose not to log tracebacks here because they could reveal
         # secrets.
-        LOGGER.critical("Failed to retrieve '%s'.", os.environ['FILE_PATH'])
+        LOGGER.critical("Failed to retrieve '%s'.", sys.argv[1])
         sys.exit(1)
     else:
         sys.exit(0)
