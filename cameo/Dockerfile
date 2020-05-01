@@ -58,7 +58,7 @@ RUN set -eux \
     # This means child images can only use `pip install` not `pip-sync`!
     && pip --no-cache-dir install "$(find ./cplex -type d -name x86-64_linux)" \
     # Delete the pip cache to minimize image size.
-    && rm -rf /root/.cache
+    && rm -rf /root/.cache \
     # Clean up to reduce layer size.
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
