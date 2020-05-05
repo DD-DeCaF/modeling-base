@@ -34,12 +34,6 @@ LABEL dk.dtu.biosustain.modeling-base.cameo.build.timestamp="${BUILD_TIMESTAMP}"
 
 WORKDIR /opt
 
-# CPLEX is provided externally; see the README.
-ARG CPLEX
-
-# We use ADD in order to decompress and extract a tar archive.
-ADD "${CPLEX}" ./cplex
-
 COPY modeling-requirements.in ./
 
 RUN set -eux \
@@ -54,11 +48,25 @@ RUN set -eux \
     # Pre-install the compiled requirements to save some build time for child
     # images.
     && pip install --require-hashes -r modeling-requirements.txt \
-    # Install CPLEX from the external source, after dependency compilation.
-    # This means child images can only use `pip install` not `pip-sync`!
-    && pip --no-cache-dir install "$(find ./cplex -type d -name x86-64_linux)" \
     # Delete the pip cache to minimize image size.
     && rm -rf /root/.cache \
     # Clean up to reduce layer size.
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ENV CPLEX=""
+
+# Copy the CPLEX directory which may or may not contain an installer.
+COPY cplex ./cplex/
+
+RUN set -eux \
+    && archive="$(find cplex -iname 'cplex*.tar.gz')" \
+    && if [ -n "${archive}" ]; then \
+        # Install CPLEX from the external source, after dependency compilation.
+        # This means child images can only use `pip install` not `pip-sync`!
+        tar -xzf "${archive}" -C cplex \
+        && export CPLEX="$(find cplex -type d -name x86-64_linux)" \
+        && pip --no-cache-dir install "${CPLEX}"; \
+    fi
+
+LABEL dk.dtu.biosustain.modeling-base.cameo.build.cplex="${CPLEX}"
