@@ -141,4 +141,4 @@ dmypy.json
 cython_debug/
 
 # Ignore the typically added CPLEX archive
-/cameo/cplex*
+cplex*.tar.gz
