@@ -19,7 +19,7 @@ env:
   - CPLEX=cplex_128.tar.gz
 before_install:
 - ./scripts/install_gcloud.sh
-- python3 download_solver.py "${CPLEX}" && mv "${CPLEX}" "cameo/${CPLEX}"
+- python3 download_solver.py "${CPLEX}" && mv "${CPLEX}" "cameo/cplex/${CPLEX}"
 install:
 - make build
 script:
