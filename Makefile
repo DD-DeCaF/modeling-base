@@ -8,8 +8,9 @@ CPLEX ?= "cplex_128.tar.gz"
 IMAGE ?= gcr.io/dd-decaf-cfbf6/modeling-base
 BUILD_COMMIT ?= $(shell git rev-parse HEAD)
 SHORT_COMMIT ?= $(shell git rev-parse --short HEAD)
-BUILD_TIMESTAMP ?= $(shell date --utc --iso-8601=seconds)
-BUILD_DATE ?= $(shell date --utc --iso-8601=date)
+# Full timestamp in UTC.
+BUILD_TIMESTAMP ?= $(shell date -u +%Y-%m-%dT%T+00:00)
+BUILD_DATE ?= $(shell date date -u +%Y-%m-%d)
 CAMEO_TAG := cameo_${BUILD_DATE}_${SHORT_COMMIT}
 CAMEO_COMPILER_TAG := cameo-compiler_${BUILD_DATE}_${SHORT_COMMIT}
 
