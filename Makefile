@@ -7,7 +7,7 @@
 IMAGE ?= gcr.io/dd-decaf-cfbf6/modeling-base
 BUILD_COMMIT ?= $(shell git rev-parse HEAD)
 SHORT_COMMIT ?= $(shell git rev-parse --short HEAD)
-# Full timestamp in UTC.
+# Full timestamp in UTC. Format corresponds to ISO-8601 but Unix compatible.
 BUILD_TIMESTAMP ?= $(shell date -u +%Y-%m-%dT%T+00:00)
 BUILD_DATE ?= $(shell date -u +%Y-%m-%d)
 CAMEO_TAG := cameo_${BUILD_DATE}_${SHORT_COMMIT}
