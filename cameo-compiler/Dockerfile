@@ -19,14 +19,12 @@ FROM gcr.io/dd-decaf-cfbf6/modeling-base:${BASE_TAG}
 
 ARG BASE_TAG=cameo
 ARG BUILD_COMMIT
-ARG BUILD_TIMESTAMP
 
 LABEL dk.dtu.biosustain.modeling-base.cameo-compiler.vendor="Novo Nordisk Foundation \
 Center for Biosustainability, Technical University of Denmark"
 LABEL maintainer="niso@biosustain.dtu.dk"
 LABEL dk.dtu.biosustain.modeling-base.cameo-compiler.build.base-tag="${BASE_TAG}"
 LABEL dk.dtu.biosustain.modeling-base.cameo-compiler.build.commit="${BUILD_COMMIT}"
-LABEL dk.dtu.biosustain.modeling-base.cameo-compiler.build.timestamp="${BUILD_TIMESTAMP}"
 
 RUN set -eux \
     # Install build tools. These can be required for the `pip-compile` step in

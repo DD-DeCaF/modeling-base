@@ -23,14 +23,12 @@ ENV SYMPY_USE_CACHE=no
 
 ARG BASE_TAG=debian
 ARG BUILD_COMMIT
-ARG BUILD_TIMESTAMP
 
 LABEL dk.dtu.biosustain.modeling-base.cameo.vendor="Novo Nordisk Foundation \
 Center for Biosustainability, Technical University of Denmark"
 LABEL maintainer="niso@biosustain.dtu.dk"
 LABEL dk.dtu.biosustain.modeling-base.cameo.build.base-tag="${BASE_TAG}"
 LABEL dk.dtu.biosustain.modeling-base.cameo.build.commit="${BUILD_COMMIT}"
-LABEL dk.dtu.biosustain.modeling-base.cameo.build.timestamp="${BUILD_TIMESTAMP}"
 
 WORKDIR /opt
 

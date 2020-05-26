@@ -7,8 +7,6 @@
 IMAGE ?= gcr.io/dd-decaf-cfbf6/modeling-base
 BUILD_COMMIT ?= $(shell git rev-parse HEAD)
 SHORT_COMMIT ?= $(shell git rev-parse --short HEAD)
-# Full timestamp in UTC. Format corresponds to ISO-8601 but Unix compatible.
-BUILD_TIMESTAMP ?= $(shell date -u +%Y-%m-%dT%T+00:00)
 BUILD_DATE ?= $(shell date -u +%Y-%m-%d)
 CAMEO_TAG := cameo_${BUILD_DATE}_${SHORT_COMMIT}
 CAMEO_COMPILER_TAG := cameo-compiler_${BUILD_DATE}_${SHORT_COMMIT}
@@ -20,20 +18,20 @@ CAMEO_COMPILER_TAG := cameo-compiler_${BUILD_DATE}_${SHORT_COMMIT}
 ## Build the cameo Debian image.
 build-cameo:
 	docker pull dddecaf/tag-spy:latest
-	$(eval DEBIAN_BASE_TAG := $(shell docker run --rm dddecaf/tag-spy:latest tag-spy dddecaf/wsgi-base debian dk.dtu.biosustain.wsgi-base.debian.build.timestamp))
+	$(eval DEBIAN_BASE_TAG := $(shell docker run --rm dddecaf/tag-spy:latest tag-spy dddecaf/wsgi-base debian))
 	docker pull dddecaf/wsgi-base:$(DEBIAN_BASE_TAG)
-	docker build --build-arg BASE_TAG=$(DEBIAN_BASE_TAG) \
+	docker build \
+		--build-arg BASE_TAG=$(DEBIAN_BASE_TAG) \
 		--build-arg BUILD_COMMIT=$(BUILD_COMMIT) \
-		--build-arg BUILD_TIMESTAMP=$(BUILD_TIMESTAMP) \
 		--tag $(IMAGE):cameo \
 		--tag $(IMAGE):$(CAMEO_TAG) \
 		./cameo
 
 ## Build the cameo-compiler Debian image.
 build-cameo-compiler:
-	docker build --build-arg BASE_TAG=$(CAMEO_TAG) \
+	docker build \
+		--build-arg BASE_TAG=$(CAMEO_TAG) \
 		--build-arg BUILD_COMMIT=$(BUILD_COMMIT) \
-		--build-arg BUILD_TIMESTAMP=$(BUILD_TIMESTAMP) \
 		--tag $(IMAGE):cameo-compiler \
 		--tag $(IMAGE):$(CAMEO_COMPILER_TAG) \
 		./cameo-compiler

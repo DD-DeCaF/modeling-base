@@ -14,7 +14,6 @@ env:
   - IMAGE=gcr.io/dd-decaf-cfbf6/modeling-base
   - BUILD_COMMIT=${TRAVIS_COMMIT}
   - SHORT_COMMIT=${TRAVIS_COMMIT:0:7}
-  - BUILD_TIMESTAMP=$(date -u +%Y-%m-%dT%T+00:00)
   - BUILD_DATE=$(date -u +%Y-%m-%d)
   - CPLEX=cplex_128.tar.gz
 before_install:
